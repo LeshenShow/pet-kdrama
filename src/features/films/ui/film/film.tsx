@@ -1,4 +1,4 @@
-import { Flex, Grid } from "@radix-ui/themes"
+import { Flex } from "@radix-ui/themes"
 import type { FilmData } from "../../../../app/data/data"
 import { FilmImage } from "./film-image/film-image"
 import { FilmDescription } from "./film - description/film-description"
@@ -8,27 +8,31 @@ type Props = {
   film: FilmData
 }
 export function Film(props: Props) {
+  const pParam = { sm: "2", md: "3", lg: "4" }
   return (
     <Flex
+      // height={{ sm: "150px", md: "175px", lg: "200px" }}
       height={"200px"}
       width={"100%"}
+      p={pParam}
       align={"center"}
       justify={"between"}
-      p={"4"}
-      className="bg-gray-300 rounded-lg "
+      className="bg-gray-300 rounded-lg"
     >
-      <Flex className="bg-blue-500" height={"100%"} align={"center"}>
+      <Flex className="bg-blue-700" height={"100%"} flexShrink={"0"}>
         <FilmImage />
       </Flex>
+
       <Flex
         direction={"column"}
         align={"start"}
-        gap={"1"}
-        pl={"4"}
-        className="bg-blue-400"
+        justify={"between"}
+        px={pParam}
+        py={pParam}
+        className="bg-pink-700 p-1"
         height={"100%"}
         width={"100%"}
-        // className="p-4 w-full min-h-[180px] max-w-lg bg-gray-200 rounded-lg shadow-md"
+        overflow={"hidden"}
       >
         <FilmDescription
           actors={props.film.actors}
@@ -38,14 +42,20 @@ export function Film(props: Props) {
           year={props.film.year}
         />
       </Flex>
+
       <Flex
         direction={"column"}
-        gap={"2"}
-        pl={"2"}
-        className="bg-blue-200"
         height={"100%"}
-        align={"center"}
+        width={"10%"}
+        minWidth="max-content"
+        gap={"1"}
+        pl={pParam}
+        pr={pParam}
+        pb={"1"}
+        align={{ sm: "start", md: "start", lg: "start" }}
         justify={"end"}
+        className="bg-green-400 "
+        flexShrink={"1"}
       >
         <FilmRate
           rateIMDB={props.film.rateIMDB}
