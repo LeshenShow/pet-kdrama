@@ -1,4 +1,4 @@
-import { Box, Heading, Text } from "@radix-ui/themes"
+import { Box, Text } from "@radix-ui/themes"
 import type { FilmData } from "../../../../../app/data/data"
 import classNames from "classnames"
 import { sizeCalc } from "../../../../../common/utils/sizeParams"
@@ -7,26 +7,21 @@ const checkLength = (value: string) => {
   const check = value.length < 100 ? value.padEnd(150, " ") : value
   return check
 }
-export function FilmDescription(props: Props) {
+export function ZFilmDescription(props: Props) {
   const description = checkLength(props.description)
-  const className = classNames("line-clamp-2  text-ellipsis truncate")
-  // const genre = props.genre.map((g) => (
-  //   <Text size="2" className=" ">
-  //     {g}
-  //   </Text>
-  // ))
+  const className = classNames("line-clamp-2  text-ellipsis truncate md:text-base ")
   const genre = `${props.year}, ${props.genre.join(", ")}`
   const actor = props.actors.join(", ")
 
   return (
     <>
       <Box pl={sizeCalc("padding")}>
-        <Heading weight="medium" className="">
+        <Text weight="medium" className="bg-amber-500 md:text-lg text-base">
           {props.name}
-        </Heading>
+        </Text>
       </Box>
       <Box width={"100%"}>
-        <Text align="left" wrap={"pretty"} size="2" className={className}>
+        <Text align="left" wrap={"pretty"} className={className}>
           {description}
         </Text>
       </Box>

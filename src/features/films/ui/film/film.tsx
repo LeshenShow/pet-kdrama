@@ -11,8 +11,8 @@ export function Film(props: Props) {
   const pParam = { sm: "2", md: "3", lg: "4" }
   return (
     <Flex
-      // height={{ sm: "150px", md: "175px", lg: "200px" }}
-      height={"200px"}
+      height={{ initial: "100px", sm: "150px", md: "175px", lg: "200px" }}
+      // height={"200px"}
       width={"100%"}
       p={pParam}
       align={"center"}
@@ -29,7 +29,7 @@ export function Film(props: Props) {
         justify={"between"}
         px={pParam}
         py={pParam}
-        className="bg-pink-700 p-1"
+        className="bg-pink-500"
         height={"100%"}
         width={"100%"}
         overflow={"hidden"}
@@ -44,6 +44,7 @@ export function Film(props: Props) {
       </Flex>
 
       <Flex
+        position={"relative"}
         direction={"column"}
         height={"100%"}
         width={"10%"}

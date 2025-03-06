@@ -25,7 +25,7 @@ export const dataSet: FilmData[] = [
     imageFilm: "https://example.com/reply_1988.jpg",
     favorite: false,
     watchLater: false,
-    yourRate: null,
+    yourRate: 5,
   },
   {
     name: "Мой мистер",

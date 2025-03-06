@@ -1,9 +1,28 @@
-import { Avatar, Badge, Text } from "@radix-ui/themes"
+import { Avatar, Badge, Box, Button, Flex, Text } from "@radix-ui/themes"
 import type { FilmData } from "../../../../../app/data/data"
+import { BookmarkIcon, StackIcon, StarIcon } from "@radix-ui/react-icons"
+
 type Props = Pick<FilmData, "rateIMDB" | "rateKinopoisk" | "yourRate" | "watchLater">
 export function FilmRate(props: Props) {
   return (
     <>
+      <Flex
+        className=""
+        position={"absolute"}
+        // width={"80%"}
+        top={"0"}
+        // justify={"between"}
+        // left={"0"}
+      >
+        <Button size={"1"}>
+          <BookmarkIcon />
+        </Button>
+
+        <Button size={"1"} color="bronze">
+          {props.yourRate ? props.yourRate : <StarIcon />}
+        </Button>
+      </Flex>
+
       <Badge color="orange" variant="surface" size="2">
         <Avatar
           size="1"
@@ -23,23 +42,6 @@ export function FilmRate(props: Props) {
         />
         <Text>{props.rateIMDB}</Text>
       </Badge>
-
-      {/* <Badge color="green" variant="surface" size="2">
-        <Avatar
-          size="1"
-          src="https://img.icons8.com/?size=100&id=TmMqdTHRs3N7&format=png&color=000000"
-          radius="medium"
-          fallback="I"
-        />
-        <Text>{props.yourRate}</Text>
-      </Badge> */}
-
-      {/* <Avatar
-        size="1"
-        src="https://img.icons8.com/?size=100&id=TmMqdTHRs3N7&format=png&color=000000"
-        radius="medium"
-        fallback="I"
-      /> */}
     </>
   )
 }
