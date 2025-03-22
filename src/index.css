@@ -1,6 +1,15 @@
+@import "@radix-ui/themes/styles.css";
+@import '@radix-ui/colors/red.css';
+@import '@radix-ui/colors/red-dark.css';
+@import '@radix-ui/colors/mauve.css';
+@import '@radix-ui/colors/mauve-dark.css';
 @import "tailwindcss";
-/* @import "tailwindcss/preflight" */
-/* @tailwind utilities; */
+@theme {
+  --color-dark: #2E1065;
+  --color-dark-2: #3c0366;
+  --color-light: #CBD5E1;
+  --color-light-2: #f1f5f9;
+}
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -8,14 +17,17 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+    background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+html,
+body {
+  touch-action: manipulation;
+}
 a {
   font-weight: 500;
   color: #646cff;
@@ -52,11 +64,14 @@ button {
 button:hover {
   border-color: #646cff;
 }
-button:focus,
+/* button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+*/::-webkit-scrollbar {
+  display: none;
+}
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -69,3 +84,7 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* .bg-custom-bg {
+  background-color: #d61b1bd1 !important;
+} */

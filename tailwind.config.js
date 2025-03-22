@@ -1,6 +1,15 @@
 module.exports = {
+  darkMode: "class", // Или "media" "class"s
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}", "./app/**/*.{js,ts,jsx,tsx}"],
+  // content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      colors: {
+        "custom-bg": "red",
+      },
+      ringWidth: {
+        DEFAULT: "0px",
+      },
       fontSize: {
         "radix-xs": "12px", // size-1 в Radix
         "radix-sm": "14px", // size-2 в Radix
