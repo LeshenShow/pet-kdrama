@@ -1,5 +1,3 @@
-import { Avatar } from "radix-ui"
-
 type Props = { image: string }
 export function FilmImage(props: Props) {
   return (

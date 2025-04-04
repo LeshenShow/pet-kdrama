@@ -1,7 +1,6 @@
 import { StarIcon } from "@radix-ui/react-icons"
 import { Flex, IconButton, Text } from "@radix-ui/themes"
 import type { Theme } from "../../../../../../App"
-import { useState } from "react"
 import { DropdownMenu } from "radix-ui"
 type Props = {
   onUserRate: (userRate: number) => void
@@ -58,7 +57,7 @@ export function RatePortal(props: Props) {
         </IconButton>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenu.Content align="end" sideOffset={0} alignOffset={-100}>
+        <DropdownMenu.Content align="center" sideOffset={0} alignOffset={200}>
           <Flex
             justify={"center"}
             align={"center"}

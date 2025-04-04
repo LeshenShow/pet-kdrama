@@ -29,17 +29,16 @@ export function Film(props: Props) {
       direction={param.directionParent}
       gap={"1"}
       p={"0"}
-      align={"center"}
-      justify={"between"}
+      // align={"start"}
+      // justify={"start"}
       className={`rounded-lg bg-gradient-to-br
         ${props.theme.isDarkMode ? "from-[#364153] to-[#52525c] " : "from-[#A78BFA] to-[#C084FC]"}`}
       // w-10/21
     >
       {/* IMAGE */}
-      <Flex className="shadow-2xl " height={"100%"} flexShrink={"0"} >
+      <Flex className="shadow-2xl " height={"100%"} flexShrink={"0"}>
         <FilmImage image={props.film.imageFilm} />
       </Flex>
-
       <Flex
         direction={param.directionChild}
         height={"100%"}
@@ -48,7 +47,7 @@ export function Film(props: Props) {
         gap={"1"}
         width={"100%"}
         justify={"between"}
-
+        className="hover:shadow-2xl"
       >
         {/* DESCRIPTION */}
         <FilmDescription
@@ -66,6 +65,7 @@ export function Film(props: Props) {
           isWatchLater={props.film.isWatchLater}
           userRate={props.film.userRate}
           theme={props.theme}
+          index={props.index}
         />
       </Flex>
     </Flex>
@@ -74,6 +74,7 @@ export function Film(props: Props) {
 type Props = {
   film: FilmData
   theme: Theme
+  index?: number
 }
 
 

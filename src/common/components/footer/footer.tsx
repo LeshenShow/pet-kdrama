@@ -1,37 +1,47 @@
-import { IconButton } from "@radix-ui/themes"
+import { IconButton, Tooltip } from "@radix-ui/themes"
 import {
-  Component2Icon,
+  BookmarkFilledIcon,
+  BookmarkIcon,
+  HeartFilledIcon,
   HeartIcon,
   MagnifyingGlassIcon,
-  TextAlignTopIcon,
   ViewGridIcon,
   ViewHorizontalIcon,
 } from "@radix-ui/react-icons"
-import type { Theme } from "../../../App"
+import type { SortMode, Theme } from "../../../App"
+import { DropDownSort } from "../drop-down-sort/drop-down-sort"
+import { DropDownSettings } from "../dialog-settings/dialog-settings"
 type Props = {
   toggleMappingMode: () => void
+  toggleSortMode: (sortMode: SortMode) => void
+  toggleDraftRangeRate: (draftRangeRate: number[]) => void
+  toggleIsWatchedVisible: (isWatchedVisible: boolean) => void
+  toggleIsWatchLater: () => void
   theme: Theme
 }
 export function Footer(props: Props) {
   return (
     <>
-      <IconButton size="2" variant="solid" onClick={() => props.toggleMappingMode()}>
-        {props.theme.isMappingMode ? (
-          <ViewHorizontalIcon width="22" height="22" />
-        ) : (
-          <ViewGridIcon width="22" height="22" />
-        )}
-      </IconButton>
-      <IconButton size="2" variant="solid" disabled>
-        <TextAlignTopIcon width="22" height="22" />
-      </IconButton>
-      <IconButton size="2" variant="solid" disabled>
-        <HeartIcon width="22" height="22" />
-      </IconButton>
-      <IconButton size="2" variant="solid" disabled>
-        <MagnifyingGlassIcon width="22" height="22" />
+      <Tooltip content={"Отображение"}>
+        <IconButton onClick={props.toggleMappingMode}>
+          {props.theme.isMappingMode ? <ViewHorizontalIcon /> : <ViewGridIcon />}
+        </IconButton>
+      </Tooltip>
+      <DropDownSettings
+        theme={props.theme}
+        toggleDraftRangeRate={props.toggleDraftRangeRate}
+        toggleIsWatchedVisible={props.toggleIsWatchedVisible}
+      />
+      <DropDownSort toggleSortMode={props.toggleSortMode} theme={props.theme} />
+      <Tooltip content={"Закладки"}>
+        <IconButton onClick={props.toggleIsWatchLater}>
+          {props.theme.isWatchLater ? <BookmarkFilledIcon /> : <BookmarkIcon />}
+        </IconButton>
+      </Tooltip>
+
+      <IconButton size="2" variant="solid">
+        <MagnifyingGlassIcon />
       </IconButton>
     </>
   )
 }
-//const {} = props;

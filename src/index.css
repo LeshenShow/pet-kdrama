@@ -10,6 +10,30 @@
   --color-light: #CBD5E1;
   --color-light-2: #f1f5f9;
 }
+/* @layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+} */
+/* html, */
+/* body {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh;
+  overflow-x: hidden;
+} */
+/* body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.radix-themes,
+.rt-Flex {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+} */
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

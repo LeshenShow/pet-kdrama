@@ -22,7 +22,7 @@ export const ScrollToTop = () => {
     <Box position={"fixed"} bottom={"8"} right={{ initial: "5%", sm: "1%", md: "5%", lg: "10%" }} className=" z-50">
       {isVisible && (
         <Tooltip content="Up">
-          <IconButton color={"gray"} variant="solid" radius="full" size="4" onClick={scrollToTop}>
+          <IconButton color={"orange"} variant="solid" radius="full" size="4" onClick={scrollToTop}>
             <ChevronUpIcon />
           </IconButton>
         </Tooltip>

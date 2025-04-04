@@ -1,42 +1,109 @@
-import { Flex, Theme } from "@radix-ui/themes"
+import { Box, Flex, Theme as ThemeRadix } from "@radix-ui/themes"
 import "./App.css"
-import { dataSet } from "./app/data/data"
-import { Header } from "./common/components/header/header"
-import { useEffect, useState } from "react"
+import { dataSet, type FilmData } from "./app/data/data"
+import { useEffect, useRef, useState } from "react"
 import { Film } from "./features/films/ui/film/film"
 import classNames from "classnames"
-import { Footer } from "./common/components/footer/footer"
 import { ScrollToTop } from "./common/components/tooltip/tooltip"
-
-export type Theme = {
-  isDarkMode: boolean
-  isMappingMode: boolean
+import { NavBar } from "./common/components/navbar/navbar"
+const createTheme = (): Theme => {
+  const genres = new Set<string>()
+  const years = new Set<number>()
+  const rates = new Set<number>()
+  dataSet.forEach((f) => {
+    f.genre.forEach((g) => genres.add(g))
+    years.add(f.year)
+    rates.add(f.rateKinopoisk).add(f.rateIMDB)
+  })
+  const rangeYears = [Math.min(...years), Math.max(...years)]
+  const listGenres = Array.from(genres).sort()
+  return {
+    isDarkMode: true,
+    isMappingMode: false,
+    sortMode: "default",
+    isWatchedVisible: true,
+    isWatchLater: false,
+    listGenres,
+    chosenGenres: [],
+    rangeYears,
+    chosenRangeYears: rangeYears,
+    rangeRate: [Math.min(...rates), Math.max(...rates)],
+    chosenRangeRate: [0, 10],
+    searchText: "",
+  }
 }
 export function App() {
   const [isPanelVisible, setIsPanelVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
+  const lastScrollY = useRef(0)
+  const [theme, setTheme] = useState<Theme>(() => createTheme())
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
-      if (currentScrollY > lastScrollY) {
+      if (currentScrollY > lastScrollY.current) {
         setIsPanelVisible(false)
       } else {
         setIsPanelVisible(true)
       }
-      setLastScrollY(currentScrollY)
+      lastScrollY.current = currentScrollY
     }
     window.addEventListener("scroll", handleScroll)
     return () => {
       window.removeEventListener("scroll", handleScroll)
     }
-  }, [lastScrollY])
-
-  const [theme, setTheme] = useState<Theme>({ isDarkMode: false, isMappingMode: false })
+  }, [])
   const toggleDarkMode = () => {
     setTheme((prev) => ({ ...prev, isDarkMode: !prev.isDarkMode }))
   }
   const toggleMappingMode = () => {
     setTheme((prev) => ({ ...prev, isMappingMode: !prev.isMappingMode }))
+  }
+  const toggleSortMode = (sortMode: SortMode) => {
+    setTheme((prev) => ({ ...prev, sortMode }))
+  }
+  const toggleChosenRangeRate = (chosenRangeRate: number[]) => {
+    setTheme((prev) => ({ ...prev, chosenRangeRate }))
+  }
+  const toggleIsWatchedVisible = (isWatchedVisible: boolean) => {
+    setTheme((prev) => ({ ...prev, isWatchedVisible }))
+  }
+  const toggleChosenGenres = (chosenGenres: string[]) => {
+    setTheme((prev) => ({ ...prev, chosenGenres }))
+  }
+  const toggleChosenRangeYears = (chosenRangeYears: number[]) => {
+    setTheme((prev) => ({ ...prev, chosenRangeYears }))
+  }
+  const toggleIsWatchLater = () => {
+    setTheme((prev) => ({ ...prev, isWatchLater: !prev.isWatchLater }))
+  }
+  const toggleSearchText = (searchText: string) => {
+    setTheme((prev) => ({ ...prev, searchText }))
+  }
+  const filmsArray = (theme: Theme, array: FilmData[] = dataSet) => {
+    const filmsArrayWithSettings = array.filter((f) => {
+      const isWithinRate = f.rateKinopoisk > theme.chosenRangeRate[0] && f.rateKinopoisk < theme.chosenRangeRate[1]
+      const isWithinYears = f.year > theme.chosenRangeYears[0] && f.year < theme.chosenRangeYears[1]
+      const isNotWatched = !theme.isWatchedVisible ? f.userRate === 0 : true
+      const isInBookmarks = theme.isWatchLater ? f.isWatchLater : true
+      const isWithinGenres = theme.chosenGenres.length === 0 || f.genre.some((g) => theme.chosenGenres.includes(g))
+      const isWithinSearch = theme.searchText.length === 0 || f.name.toLocaleLowerCase().includes(theme.searchText)
+
+      return isWithinRate && isWithinYears && isNotWatched && isInBookmarks && isWithinGenres && isWithinSearch
+    })
+    switch (theme.sortMode) {
+      // case "default":
+      //   filmsArrayWitchSettings.sort((a, b) => b.rateIMDB - a.rateIMDB)
+      //   break
+      case "imdb":
+        filmsArrayWithSettings.sort((a, b) => b.rateIMDB - a.rateIMDB)
+        break
+      case "kinopoisk":
+        filmsArrayWithSettings.sort((a, b) => b.rateKinopoisk - a.rateKinopoisk)
+        break
+      case "user":
+        filmsArrayWithSettings.sort((a, b) => b.userRate - a.userRate)
+        break
+    }
+    return filmsArrayWithSettings.map((f, i) => <Film film={f} key={f.name} theme={theme} index={i} />)
   }
   const panelBg = classNames(
     `${
@@ -44,207 +111,79 @@ export function App() {
         ? "bg-dark shadow-light/20 inset-shadow-light/10"
         : "bg-light shadow-dark/20 inset-shadow-dark/10"
     }`,
-    ""
+    `py-1 px-2 duration-300 transition-transform `
   )
+  const navBarActions = {
+    toggleDarkMode,
+    toggleMappingMode,
+    toggleSortMode,
+    toggleIsWatchedVisible,
+    toggleIsWatchLater,
+    toggleChosenRangeRate,
+    toggleChosenRangeYears,
+    toggleChosenGenres,
+    toggleSearchText,
+  }
   return (
-    <Theme accentColor="violet" radius="medium" appearance={theme.isDarkMode ? "light" : "dark"}>
+    <ThemeRadix accentColor="violet" radius="medium" appearance={theme.isDarkMode ? "light" : "dark"}>
       {/* <ThemePanel /> */}
       <ScrollToTop />
       <Flex
         direction={"column"}
+        // overflow={"hidden"}
+        // position={"relative"}
+        minHeight={"100vh"}
         className={`bg-gradient-to-r
         ${theme.isDarkMode ? "  from-dark to-dark-2  text-light" : "from-light-2 to-light text-dark"}`}
       >
         <Flex
-          gap="2"
-          align="center"
-          justify="between"
-          className={`${panelBg}
-          ${isPanelVisible ? "translate-y-0" : "-translate-y-full"}
-          transition-transform duration-300 rounded-b-xl rounded-bl-xl  shadow-md `}
-          top="0"
           position="sticky"
+          top="0"
+          className={`${panelBg} rounded-b-xl rounded-bl-xl  shadow-md z-1
+          ${isPanelVisible ? "translate-y-0" : "-translate-y-full"}`}
         >
-          <Header toggleDarkMode={toggleDarkMode} theme={theme} />
+          <NavBar navBarActions={navBarActions} theme={theme} />
         </Flex>
         <Flex
           direction={theme.isMappingMode ? "row" : "column"}
+          // position={"relative"}
+          // minHeight="100vh"
           wrap="wrap"
           gap="1"
-          align="center"
-          justify="between"
-          minHeight="100vh"
-          pt={"2"}
+          align="start"
+          justify="center"
           px={{ initial: "1%", sm: "5%", md: "10%", lg: "15%" }}
-          className="shadow-lg"
+          pt={"2"}
+          pb="8"
+          className=" "
         >
-          {dataSet.map((f) => (
-            <Film film={f} key={f.name} theme={theme} />
-          ))}
+          {filmsArray(theme, dataSet)}
         </Flex>
         <Flex
-          justify="center"
-          align="center"
-          position={"sticky"}
-          bottom="0px"
-          className={`${panelBg}
-           ${isPanelVisible ? "translate-y-full" : "-translate-y-0"}
-             transition-transform duration-300 rounded-tr-xl rounded-t-xl inset-shadow-2xs`}
-          gap={"3"}
-          pt="1"
-          pb={"1"}
+          position="fixed"
+          width="100%"
+          bottom="0"
+          className={`${panelBg} rounded-tr-xl rounded-t-xl inset-shadow-2xs
+          ${isPanelVisible ? "translate-y-full" : "-translate-y-0 "}`}
         >
-          <Footer toggleMappingMode={toggleMappingMode} theme={theme} />
+          <NavBar navBarActions={navBarActions} theme={theme} />
         </Flex>
       </Flex>
-    </Theme>
+    </ThemeRadix>
   )
-
-  // <Box position={"fixed"} top={"85%"} left={"85%"}>
-  // <Tooltip content="Add to library">
-  //   <IconButton radius="full" size={"3"}>
-  //     <ArrowUpIcon />
-  //   </IconButton>
-  // </Tooltip>
-  // </Box>
-  // return (
-  //   <Grid
-  //     areas={`
-  //       "header header header"
-  //       "leftBar main rightBar"
-  //       "footer footer footer"
-  //     `}
-  //     // columns=" 10% 1fr 5% "
-  //     // rows="50px 1fr 20px"
-  //     height="100%"
-  //     style={{ gridTemplateColumns: "0% 1fr 5%" }}
-  //     className="
-  //   sm:[grid-template-columns:15%_1fr_10%]
-  //   md:grid-cols-[30%_1fr_15%]
-  //   lg:grid-cols-[100px_1fr_20%]
-  //   bg-blue-100
-  //  sm:bg-blue-300
-  //  md:bg-blue-500
-  //  lg:bg-blue-700"
-  //   >
-  //     {/* <Flex
-  //       gridArea={"header"}
-  //       overflow-ellipsis
-  //       gap={"2"}
-  //       align={"center"}
-  //       justify={"center"}
-  //       className="bg-amber-100"
-  //       width={"100%"}
-  //       position={"sticky"}
-  //       top={"0px"}
-  //     >
-  //       <Header />
-  //     </Flex> */}
-
-  //     <Flex gridArea={"leftBar"} className="bg-red-500 md:bg-amber-500">
-  //       Leftbar
-  //     </Flex>
-
-  //     <Flex
-  //       gridArea={"main"}
-  //       wrap={"wrap"}
-  //       gap={"2"}
-  //       align={"center"}
-  //       justify={"center"}
-  //       className="pt-3 p-2"
-  //       // height={"100%"}
-  //       minHeight="100vh"
-  //     >
-  //       <Films films={dataSet} />
-  //     </Flex>
-
-  //     <Flex gridArea={"rightBar"} className="bg-amber-400">
-  //       Right bar
-  //     </Flex>
-
-  //     {/* <Box gridArea={"footer"} position={"sticky"} bottom={"0px"} className="bg-amber-400">
-  //       Footer
-  //     </Box> */}
-  //   </Grid>
-  // )
 }
-
-// ______________
-// ;<Theme accentColor="violet" radius="medium" appearance={theme}>
-//   {/* <ThemePanel /> */}
-
-//   <Grid
-//     areas={`
-//     "header header header"
-//     ". main ."
-//     "footer footer footer"
-//     `}
-//     columns={{
-//       initial: "0 auto 0 ",
-//       xs: " 0 auto 0 ",
-//       sm: " 10% 1fr 5% ",
-//       md: " 15% 1fr 10% ",
-//       lg: " 20% 1fr 15% ",
-//       xl: " 25% 1fr 20% ",
-//     }}
-//     rows={{
-//       initial: "auto auto 40px ",
-//       xs: " auto auto 40px ",
-//       sm: " auto auto 0px ",
-//     }}
-//     className={`bg-gradient-to-r
-//     ${
-//       theme === "dark"
-//         ? "  from-violet-900 to-purple-950 text-zinc-300"
-//         : "from-slate-100 to-zinc-300 text-zinc-900"
-//     }`}
-//   >
-//     <ScrollToTop />
-//     <Flex
-//       gridArea={"main"}
-//       wrap={"wrap"}
-//       gap={"1"}
-//       align={"center"}
-//       justify={"center"}
-//       className="pt-3 p-2 "
-//       minHeight="100vh"
-//     >
-//       {dataSet.map((f) => (
-//         <Film film={f} key={f.name} theme={theme} />
-//       ))}
-//     </Flex>
-
-//     <Flex
-//       gridArea={"header"}
-//       overflow-ellipsis
-//       gap={"2"}
-//       align={"center"}
-//       justify={"between"}
-//       className={`${panelBg} rounded-b-xl rounded-bl-xl`}
-//       height="100%"
-//       width={"100%"}
-//       top={"0px"}
-//       position={"sticky"}
-//     >
-//       <Header toggleTheme={toggleTheme} theme={theme} />
-//     </Flex>
-//     <Flex
-//       gridArea={"footer"}
-//       justify="center"
-//       position={"sticky"}
-//       bottom="0"
-//       className={`${panelBg} rounded-tr-xl rounded-t-xl `}
-//       gap={"3"}
-//     >
-//       <Footer />
-//     </Flex>
-//     {/* RIGHT */}
-//     {/* <Flex gridArea={"rightBar"} className=" overflow-hidden">
-//       <Text>Right bar </Text>
-//     </Flex> */}
-//     {/* LEFT */}
-//     {/* <Flex gridArea={"leftBar"} className=" overflow-hidden">
-//       <Text>Left bar {theme}</Text>
-//     </Flex> */}
-//   </Grid>
-// </Theme>
+export type SortMode = "imdb" | "kinopoisk" | "user" | "default"
+export type Theme = {
+  isDarkMode: boolean
+  isMappingMode: boolean
+  isWatchLater: boolean
+  isWatchedVisible: boolean
+  sortMode: SortMode
+  listGenres: string[]
+  chosenGenres: string[]
+  rangeRate: number[]
+  chosenRangeRate: number[]
+  rangeYears: number[]
+  chosenRangeYears: number[]
+  searchText: string
+}

@@ -1,8 +1,6 @@
 import { Box, Flex, Separator, Text } from "@radix-ui/themes"
 import type { FilmData } from "../../../../../app/data/data"
 import type { Theme } from "../../../../../App"
-import { FilmName } from "./fil-name/film-name"
-
 type Props = Pick<FilmData, "name" | "description" | "year" | "genre" | "actors"> & {
   theme: Theme
 }
