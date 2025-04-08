@@ -1,5 +1,5 @@
 module.exports = {
-  darkMode: "class", // Или "media" "class"s
+  darkMode: "class", // Или "media" "class"
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}", "./app/**/*.{js,ts,jsx,tsx}"],
   // content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {

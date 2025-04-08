@@ -15,27 +15,29 @@ import {
 import { useState } from "react"
 import classNames from "classnames"
 import { DialogGenres } from "./dialog-genres/dialog-genres"
-import type { Theme } from "../../../../App"
-type Props = {
-  toggleChosenRangeRate: (chosenRangeRate: number[]) => void
-  toggleIsWatchedVisible: (isWatchedVisible: boolean) => void
-  toggleChosenRangeYears: (chosenRangeYears: number[]) => void
-  toggleChosenGenres: (chosenGenres: string[]) => void
-  theme: Theme
-}
-export function DialogSettings(props: Props) {
-  const { rangeRate, chosenRangeRate, rangeYears, chosenRangeYears, chosenGenres } = props.theme
-  const [localRate, setLocalRate] = useState<number[]>(chosenRangeRate)
-  const [localYears, setLocalYears] = useState<number[]>(chosenRangeYears)
-  const [localGenres, setLocalGenres] = useState<string[]>(chosenGenres)
-  const [isChecked, setIsChecked] = useState<boolean>(!props.theme.isWatchedVisible)
+import { useDispatch } from "react-redux"
+import { dataSettingsActions } from "../../../../store/data-settings-reducer"
+import { useAppSelector, uiSettingsSelector, dataSettingsSelector } from "../../../hooks/useAppSelector"
+
+export function DialogSettings() {
+  const dispatch = useDispatch()
+  const uiSettings = useAppSelector(uiSettingsSelector)
+  const dataSettings = useAppSelector(dataSettingsSelector)
+  const setChosenRangeRate = (range: number[]) => dispatch(dataSettingsActions.setChosenRangeRate(range))
+  const setIsWatchedVisible = (flag: boolean) => dispatch(dataSettingsActions.setIsWatchedVisible(flag))
+  const setChosenRangeYears = (range: number[]) => dispatch(dataSettingsActions.setChosenRangeYears(range))
+  const setChosenGenres = (genres: string[]) => dispatch(dataSettingsActions.setChosenGenres(genres))
+
+  const [localRate, setLocalRate] = useState<number[]>(dataSettings.chosenRangeRate)
+  const [localYears, setLocalYears] = useState<number[]>(dataSettings.chosenRangeYears)
+  const [localGenres, setLocalGenres] = useState<string[]>(dataSettings.chosenGenres)
+  const [isChecked, setIsChecked] = useState<boolean>(!dataSettings.isWatchedVisible)
   const toggleChecked = () => {
     setIsChecked((prev) => !prev)
   }
-
   const itemStyle = classNames(
     ` cursor-pointer rounded-md   `,
-    props.theme.isDarkMode ? "hover:bg-light" : "hover:bg-dark"
+    uiSettings.isDarkMode ? "hover:bg-light" : "hover:bg-dark"
   )
   return (
     <Dialog.Root defaultOpen={false}>
@@ -71,7 +73,7 @@ export function DialogSettings(props: Props) {
               <Separator orientation="vertical" color="plum" />
               <DialogGenres
                 setLocalGenres={setLocalGenres}
-                genresArray={props.theme.listGenres}
+                genresArray={dataSettings.listGenres}
                 localGenres={localGenres}
               />
             </Flex>
@@ -100,8 +102,8 @@ export function DialogSettings(props: Props) {
               </Flex>
               <Box width={"100%"} p={"1"}>
                 <Slider
-                  min={Math.floor(rangeRate[0])}
-                  max={Math.ceil(rangeRate[1])}
+                  min={Math.floor(dataSettings.rangeRate[0])}
+                  max={Math.ceil(dataSettings.rangeRate[1])}
                   step={0.1}
                   minStepsBetweenThumbs={1}
                   value={localRate}
@@ -128,7 +130,7 @@ export function DialogSettings(props: Props) {
                   variant="solid"
                   color="tomato"
                   onClick={() => {
-                    setLocalYears(rangeYears)
+                    setLocalYears(dataSettings.rangeYears)
                   }}
                 >
                   Сбросить
@@ -137,8 +139,8 @@ export function DialogSettings(props: Props) {
               <Box width={"100%"} p={"1"}>
                 <Slider
                   color="tomato"
-                  min={Math.floor(rangeYears[0])}
-                  max={Math.ceil(rangeYears[1])}
+                  min={Math.floor(dataSettings.rangeYears[0])}
+                  max={Math.ceil(dataSettings.rangeYears[1])}
                   step={1}
                   minStepsBetweenThumbs={1}
                   value={localYears}
@@ -152,7 +154,7 @@ export function DialogSettings(props: Props) {
 
         <Flex gap="3" mt="4" justify="end">
           <Dialog.Close>
-            <Button variant="soft" color="gray" onClick={() => setLocalRate(chosenRangeRate)}>
+            <Button variant="soft" color="gray" onClick={() => setLocalRate(dataSettings.chosenRangeRate)}>
               Отмена
             </Button>
           </Dialog.Close>
@@ -160,10 +162,10 @@ export function DialogSettings(props: Props) {
             <Button
               color="green"
               onClick={() => {
-                props.toggleChosenRangeRate(localRate)
-                props.toggleChosenRangeYears(localYears)
-                props.toggleIsWatchedVisible(!isChecked)
-                props.toggleChosenGenres(localGenres)
+                setChosenRangeRate(localRate)
+                setChosenRangeYears(localYears)
+                setIsWatchedVisible(!isChecked)
+                setChosenGenres(localGenres)
               }}
             >
               Принять
@@ -174,4 +176,3 @@ export function DialogSettings(props: Props) {
     </Dialog.Root>
   )
 }
-//const {} = props;

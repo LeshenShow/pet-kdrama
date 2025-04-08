@@ -1,18 +1,21 @@
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons"
 import { Button, Dialog, Flex, IconButton, TextField, Tooltip } from "@radix-ui/themes"
 import { useState } from "react"
+import { useDispatch } from "react-redux"
+import { dataSettingsActions } from "../../../../../store/data-settings-reducer"
+import { useAppSelector, dataSettingsSelector } from "../../../../hooks/useAppSelector"
 
-type Props = {
-  toggleSearchText: (searchText: string) => void
-}
-export function DialogSearch(props: Props) {
+export function DialogSearch() {
+  const dispatch = useDispatch()
+  const dataSettings = useAppSelector(dataSettingsSelector)
+  const setSearchText = (text: string) => dispatch(dataSettingsActions.setSearchText(text))
   const [draftSearch, setDraftSearch] = useState<string>("")
 
   return (
     <Dialog.Root defaultOpen={false}>
       <Tooltip content={"Поиск"}>
         <Dialog.Trigger>
-          <IconButton size="2" variant="solid" onClick={() => {}}>
+          <IconButton size="2" variant="solid" color={dataSettings.searchText.length > 0 ? "red" : "violet"}>
             <MagnifyingGlassIcon />
           </IconButton>
         </Dialog.Trigger>
@@ -40,7 +43,7 @@ export function DialogSearch(props: Props) {
           <Dialog.Close>
             <Button
               onClick={() => {
-                props.toggleSearchText(draftSearch.toLowerCase())
+                setSearchText(draftSearch.toLowerCase())
               }}
               color="green"
             >
@@ -52,4 +55,4 @@ export function DialogSearch(props: Props) {
     </Dialog.Root>
   )
 }
-//const {} = props;
+

@@ -12,6 +12,7 @@ export type FilmData = {
   isWatchLater: boolean
   userRate: number
 }
+
 export const dataSet: FilmData[] = [
   {
     name: "Вернуться в 1988",
