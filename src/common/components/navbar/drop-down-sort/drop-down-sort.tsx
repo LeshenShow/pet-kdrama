@@ -5,7 +5,7 @@ import classNames from "classnames"
 import { useDispatch } from "react-redux"
 import { type SortMode } from "../../../../store/ui-settings-reducer"
 import { uiSettingsActions } from "../../../../store/ui-settings-reducer"
-import { useAppSelector, uiSettingsSelector } from "../../../hooks/useAppSelector"
+import { useAppSelector, uiSettingsSelector, authSelector } from "../../../hooks/useAppSelector"
 
 export function DropDownSort() {
   const dispatch = useDispatch()
@@ -13,23 +13,32 @@ export function DropDownSort() {
   const itemClass = classNames(`hover:bg-dark/50 rounded-lg p-1`)
   const setSortMode = (sortMode: SortMode) => dispatch(uiSettingsActions.setSortMode(sortMode))
   const onSetSortMode = (value: SortMode) => value !== uiSettings.sortMode && setSortMode(value)
-
-  const sortOptions: { label: string; value: SortMode }[] = [
+  const auth = useAppSelector(authSelector)
+  const sortOptions: { label: string; value: SortMode; isAuth?: boolean }[] = [
     { label: "По рейтингу IMDB", value: "imdb" },
     { label: "По рейтингу КиноПоиск", value: "kinopoisk" },
-    { label: "По Вашему рейтингу", value: "user" },
+    { label: "По Вашему рейтингу", value: "user", isAuth: auth.isAuthenticated ? false : true },
     { label: "По умолчанию", value: "default" },
   ]
-  const dropDownItem = sortOptions.map(({ label, value }) => (
-    <DropdownMenu.Item
-      key={value}
-      onClick={() => onSetSortMode(value)}
-      className={classNames(itemClass, uiSettings.sortMode === value && "text-light bg-dark-2")}
-    >
-      {label}
-      {/* {isActive && <CheckIcon className="ml-auto" />} */}
-    </DropdownMenu.Item>
-  ))
+  const dropDownItem = sortOptions.map(({ label, value, isAuth }) => {
+    const isDisabled = isAuth && !auth.isAuthenticated
+    return (
+      <DropdownMenu.Item
+        key={value}
+        onClick={() => !isDisabled && onSetSortMode(value)}
+        disabled={isDisabled}
+        className={classNames(
+          itemClass,
+          uiSettings.sortMode === value && "text-light bg-dark-2",
+          isDisabled && "bg-gray-300 hover:bg-gray-300 text-gray-500"
+        )}
+        // color="gray"
+      >
+        {label}
+        {/* {isActive && <CheckIcon className="ml-auto" />} */}
+      </DropdownMenu.Item>
+    )
+  })
   return (
     <DropdownMenu.Root>
       <Tooltip content={"Сортировка"}>

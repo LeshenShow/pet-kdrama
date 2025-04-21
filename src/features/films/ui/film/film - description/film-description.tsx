@@ -1,9 +1,9 @@
 import { Box, Flex, Separator, Text } from "@radix-ui/themes"
 import type { FilmData } from "../../../../../app/data/data"
 import { useAppSelector, uiSettingsSelector } from "../../../../../common/hooks/useAppSelector"
+import { checkLength } from "../../../../../app/data/check-length-description"
 // type Props = Pick<FilmData, "name" | "description" | "year" | "genre" | "actors"> & { }
 type Props = { film: FilmData; filmKey: string }
-const checkLength = (value: string) => (value.length < 100 ? value.padEnd(150, " ") : value)
 
 export function FilmDescription({ ...props }: Props) {
   const { description, genre, year, actors, name } = props.film
@@ -26,13 +26,14 @@ export function FilmDescription({ ...props }: Props) {
         descriptionLineClamp: "line-clamp-3",
         namePadding: { sm: "1", md: "2", lg: "3" },
       } as const)
+  const textStyle = "text-pretty line-clamp-1"
   return (
     <Flex direction={"column"} className="" pr={"1"}>
       <Flex pt={isMappingMode.namePadding} className="">
         <Text
           weight={"bold"}
           size={isMappingMode.nameTextSize}
-          className=" text-ellipsis truncate  line-clamp-1 text-pretty font-mono text-left indent-3"
+          className={`${textStyle} text-ellipsis truncate   font-mono text-left indent-3`}
         >
           {name}
         </Text>
@@ -41,17 +42,17 @@ export function FilmDescription({ ...props }: Props) {
         <Text
           align="left"
           size={isMappingMode.descriptionTextSize}
-          className={`${isMappingMode.descriptionLineClamp} text-pretty indent-1 line-clamp-1`}
+          className={`${isMappingMode.descriptionLineClamp}  ${textStyle} indent-1 `}
         >
           {filmDescription}
         </Text>
       </Flex>
-      <Separator size="4" color="gray" />
-      <Box mt={"auto"} className="actor">
+      <Separator size="4" color="gray" mt={"auto"} />
+      <Box className="actor">
         <Text
           align="left"
           size={{ initial: "1", sm: "2", md: "2", lg: "3" }}
-          className={`line-clamp-1 ${isMappingMode.displayAddInfo} text-pretty`}
+          className={` ${isMappingMode.displayAddInfo} ${textStyle} `}
         >
           {actor}
         </Text>
@@ -60,7 +61,7 @@ export function FilmDescription({ ...props }: Props) {
         <Text
           align="left"
           size={{ initial: "1", sm: "2", md: "2", lg: "3" }}
-          className={`line-clamp-1 ${isMappingMode.displayAddInfo} text-pretty`}
+          className={`${isMappingMode.displayAddInfo} ${textStyle}`}
         >
           {filmYearANdGenre}
         </Text>

@@ -6,8 +6,9 @@ import classNames from "classnames"
 export function CalloutDisplay({ closing }: { closing: boolean }) {
   return (
     <Flex
+      bottom={"8"}
       className={classNames(
-        "fixed bottom-7 bg-light-2/100 rounded-xl transition-all duration-300",
+        "fixed  bg-light-2/100 rounded-xl transition-all duration-300",
         closing ? "opacity-0 -translate-y-2" : "opacity-100 translate-y-0"
       )}
     >

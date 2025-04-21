@@ -17,12 +17,13 @@ import classNames from "classnames"
 import { DialogGenres } from "./dialog-genres/dialog-genres"
 import { useDispatch } from "react-redux"
 import { dataSettingsActions } from "../../../../store/data-settings-reducer"
-import { useAppSelector, uiSettingsSelector, dataSettingsSelector } from "../../../hooks/useAppSelector"
+import { useAppSelector, uiSettingsSelector, dataSettingsSelector, authSelector } from "../../../hooks/useAppSelector"
 
 export function DialogSettings() {
   const dispatch = useDispatch()
   const uiSettings = useAppSelector(uiSettingsSelector)
   const dataSettings = useAppSelector(dataSettingsSelector)
+  const auth = useAppSelector(authSelector)
   const setChosenRangeRate = (range: number[]) => dispatch(dataSettingsActions.setChosenRangeRate(range))
   const setIsWatchedVisible = (flag: boolean) => dispatch(dataSettingsActions.setIsWatchedVisible(flag))
   const setChosenRangeYears = (range: number[]) => dispatch(dataSettingsActions.setChosenRangeYears(range))
@@ -58,15 +59,19 @@ export function DialogSettings() {
               direction={"row"}
               align={"center"}
               justify={"between"}
-              gap={"1"}
-              className={itemStyle}
+              className={`${itemStyle}`}
               width={"100%"}
               p={"1"}
             >
-              <Badge variant="solid" className="" size={"2"}>
+              <Badge variant={auth.isAuthenticated ? "solid" : "outline"} className="" size={"2"}>
                 <Text as="label" size="1">
                   <Text mr={"2"}>Скрыть просмотренное</Text>
-                  <Checkbox onCheckedChange={toggleChecked} checked={isChecked} color="gray" />
+                  <Checkbox
+                    onCheckedChange={toggleChecked}
+                    checked={isChecked}
+                    color="gray"
+                    disabled={auth.isAuthenticated ? false : true}
+                  />
                 </Text>
               </Badge>
 

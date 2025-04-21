@@ -1,14 +1,16 @@
-import { Avatar, Badge, Box, Flex, IconButton } from "@radix-ui/themes"
+import { Avatar, Badge, Box, Flex } from "@radix-ui/themes"
 import type { FilmData } from "../../../../../app/data/data"
 import { BookmarkIcon, BookmarkFilledIcon } from "@radix-ui/react-icons"
 import { RatePortal } from "./rate-portal/rate-portal"
-import { useAppSelector, uiSettingsSelector } from "../../../../../common/hooks/useAppSelector"
+import { useAppSelector, uiSettingsSelector, authSelector } from "../../../../../common/hooks/useAppSelector"
 import { useDispatch } from "react-redux"
 import { dataActions } from "../../../../../store/data-reducer"
+import { IconTooltipButton } from "../../icon-button/icon-button"
 type Props = { film: FilmData; filmKey: string }
 export function FilmRate(props: Props) {
   const uiSettings = useAppSelector(uiSettingsSelector)
   const dispatch = useDispatch()
+  const auth = useAppSelector(authSelector)
   const isMappingMode = uiSettings.isMappingMode
     ? ({
         direction: "row",
@@ -37,7 +39,8 @@ export function FilmRate(props: Props) {
       className="rounded-r-lg "
     >
       <Flex gap={"1"} position={isMappingMode.position} top={"0"} left={"1"}>
-        <IconButton
+        {/* <IconButton
+          content="В закладки"
           onClick={onIsWatchLater}
           variant="solid"
           color={`${props.film.isWatchLater ? "green" : "violet"}`}
@@ -46,9 +49,23 @@ export function FilmRate(props: Props) {
           radius="medium"
         >
           {props.film.isWatchLater ? <BookmarkFilledIcon /> : <BookmarkIcon />}
-        </IconButton>
-
-        <RatePortal onUserRate={onUserRate} userRate={props.film.userRate} />
+        </IconButton> */}
+        <IconTooltipButton
+          content={"В закладки"}
+          onClick={onIsWatchLater}
+          stopPropagation
+          iconToggle={{
+            on: <BookmarkFilledIcon />,
+            off: <BookmarkIcon />,
+          }}
+          color={`${props.film.isWatchLater ? "green" : "violet"}`}
+          size={isMappingMode.bookAndRateSize}
+          disabled={!auth.isAuthenticated}
+        />
+        {/* <IconButton onClick={handleOnClick}>
+          <BookmarkFilledIcon />
+        </IconButton> */}
+        <RatePortal onUserRate={onUserRate} userRate={props.film.userRate} disabled={!auth.isAuthenticated} />
       </Flex>
 
       <Flex

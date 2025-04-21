@@ -7,5 +7,6 @@ export const generateKeys = (array: FilmData[]) => {
     const key: string = v4()
     newData[key] = element
   })
+  // console.log("generate")
   return newData
 }

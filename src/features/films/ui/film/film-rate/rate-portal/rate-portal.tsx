@@ -1,10 +1,11 @@
 import { StarIcon } from "@radix-ui/react-icons"
-import { Flex, IconButton, Text } from "@radix-ui/themes"
+import { Flex, IconButton, Text, Tooltip } from "@radix-ui/themes"
 import { DropdownMenu } from "radix-ui"
 import { useAppSelector, uiSettingsSelector } from "../../../../../../common/hooks/useAppSelector"
 type Props = {
   onUserRate: (userRate: number) => void
   userRate: number
+  disabled: boolean
 }
 export function RatePortal(props: Props) {
   const uiSettings = useAppSelector(uiSettingsSelector)
@@ -28,23 +29,28 @@ export function RatePortal(props: Props) {
         </Flex>
       </DropdownMenu.Item>
     ))
-
+  const onClickHandler = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    // e.preventDefault()
+  }
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger className="" asChild>
-        <IconButton
-          color={`${props.userRate ? "green" : "violet"}`}
-          variant="solid"
-          className=""
-          size={uiSettings.isMappingMode ? "1" : "2"}
-        >
-          {props.userRate ? (
-            <Flex className={`text-sm font-medium text-white " `}>{props.userRate}</Flex>
-          ) : (
-            <StarIcon />
-          )}
-        </IconButton>
-      </DropdownMenu.Trigger>
+      <Tooltip content="Дать оценку">
+        <DropdownMenu.Trigger className="" asChild disabled={props.disabled}>
+          <IconButton
+            color={`${props.userRate ? "green" : "violet"}`}
+            variant="solid"
+            className=""
+            size={uiSettings.isMappingMode ? "1" : "2"}
+          >
+            {props.userRate && !props.disabled ? (
+              <Flex className={`text-sm font-medium text-white " `}>{props.userRate}</Flex>
+            ) : (
+              <StarIcon />
+            )}
+          </IconButton>
+        </DropdownMenu.Trigger>
+      </Tooltip>
       <DropdownMenu.Portal>
         <DropdownMenu.Content align="center" sideOffset={0} alignOffset={200}>
           <Flex
@@ -53,7 +59,7 @@ export function RatePortal(props: Props) {
             className={`p-2 rounded-xl  shadow-lg
               ${uiSettings.isDarkMode ? "bg-dark/90 text-light" : "bg-light/90 text-dark"}`}
           >
-            <Flex onClick={(event) => event.stopPropagation()}>{renderRatingButtons()}</Flex>
+            <Flex onClick={onClickHandler}>{renderRatingButtons()}</Flex>
           </Flex>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>

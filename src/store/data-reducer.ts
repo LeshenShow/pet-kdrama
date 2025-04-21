@@ -22,6 +22,7 @@ const initialState: DataState = generateKeys(dataSet)
 export type DataAction = ReturnType<(typeof dataActions)[keyof typeof dataActions]>
 
 export const dataReducer = (state: DataState = initialState, action: DataAction): DataState => {
+  // console.log("enter data reducer")
   switch (action.type) {
     case DATA_ACTIONS.SET_USER_RATE:
       return { ...state, [action.payload.id]: { ...state[action.payload.id], userRate: action.payload.userRate } }
